@@ -45,15 +45,9 @@ function start() {
         }]
       )
       .then(function (answer) {
-        console.log("id item test" + results[0].item_id);
-        // console.log("id item test2" + answer.iditem);
-        // console.log("id item test3" + results[answer.iditem].item_id);
 
-        // console.log("dataset product name test:" + results[0].product_name);
-        // console.log("dataset stock quantity test:" + results[0].stock_quantity);
+        // lookup array index
         var newi = answer.iditem - 1;
-
-        console.log("id item test2" + results[newi].item_id);
 
         // obtain info of item they want to buy
         var itemtobuy;
@@ -63,21 +57,23 @@ function start() {
           }
           else {
             console.log("The item you requested is not currently available.")
-          }
+          }                                        
         }
 
-        console.log("item id to buy stock existing:" + itemtobuy.stock_quantity);
-        console.log("units requested to buy"+answer.numunits);
-        var newstock = itemtobuy.stock_quantity - answer.numunits
+        console.log("units requested to buy" + answer.numunits);
+        var newstock = itemtobuy.stock_quantity - answer.numunits;
+        console.log("item to buy price:"+itemtobuy.price);
+        var totalcost = (itemtobuy.price)*answer.numunits;
+        console.log("Total Price:"+totalcost);
+        console.log("Stock leftover for item requested" + newstock);
 
-        console.log("newstock" + newstock);
-        console.log("item id to buy:" + itemtobuy);
 
 
-        // // check if there is enough product 
+        // // check if there is enough product and update product
         if ((itemtobuy.stock_quantity) > 0) {
-          console.log("updating database if statement works");
-
+          console.log("updating database");
+          var totalcost = (itemtobuy.price)*answer.numunits;
+          console.log("Total Price:$"+totalcost);
           connection.query(
             "UPDATE products SET ? WHERE ?",
             [
@@ -90,7 +86,6 @@ function start() {
             ],
             function (error) {
               if (error) throw err;
-              console.log("Final -- Total price:")
               start();
             }
           )
