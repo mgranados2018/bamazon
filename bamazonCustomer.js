@@ -47,20 +47,34 @@ function start() {
       .then(function (answer) {
         // obtain info of item they want to buy
         var itemtobuy;
-        
-        for (var i=0; i<results.lenght; i++){
-          if(results[i].item_id === answer.iditem){
-            itemtobuy = results [i];
+
+        for (var i = 0; i < results.length; i++) {
+          if (results[i].item_id === answer.iditem) {
+            itemtobuy = results[i];
           }
         }
 
         // check if there is enough product 
         if (itemtobuy.stock_quantity > 0) {
-          connection.query("UPDATE ")
-
+          connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+              {
+                stock_quantity: stock_quantity - answer.numunits
+              },
+              {
+                item_id: itemtobuy
+              }
+            ],
+            function (error) {
+              if (error) throw err;
+              console.log("Successfully bought item!");
+            }
+          )
         }
         else {
-
+          // there isn't enough product available
+          console.log("We apologize but there isn't enough product.")
         }
       });
   })
