@@ -62,18 +62,15 @@ function start() {
 
         console.log("units requested to buy" + answer.numunits);
         var newstock = itemtobuy.stock_quantity - answer.numunits;
-        console.log("item to buy price:"+itemtobuy.price);
+        console.log("Total Price:"+itemtobuy.price);
         var totalcost = (itemtobuy.price)*answer.numunits;
-        console.log("Total Price:"+totalcost);
         console.log("Stock leftover for item requested" + newstock);
 
-
-
         // // check if there is enough product and update product
-        if ((itemtobuy.stock_quantity) > 0) {
+        if (answer.numunits >= itemtobuy.stock_quantity) {
           console.log("updating database");
           var totalcost = (itemtobuy.price)*answer.numunits;
-          console.log("Total Price:$"+totalcost);
+          console.log("Total Charged:$"+totalcost);
           connection.query(
             "UPDATE products SET ? WHERE ?",
             [
