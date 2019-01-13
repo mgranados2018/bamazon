@@ -24,7 +24,7 @@ connection.connect(function (err) {
 function start() {
 
 
-  connection.query("SELECT * FROM bamazon.products", function (err, results) {
+  connection.query("SELECT * FROM products", function (err, results) {
     if (err) throw err;
     // display table of products first
 
@@ -45,36 +45,60 @@ function start() {
         }]
       )
       .then(function (answer) {
+        console.log("id item test" + results[0].item_id);
+        // console.log("id item test2" + answer.iditem);
+        // console.log("id item test3" + results[answer.iditem].item_id);
+
+        // console.log("dataset product name test:" + results[0].product_name);
+        // console.log("dataset stock quantity test:" + results[0].stock_quantity);
+        var newi = answer.iditem - 1;
+
+        console.log("id item test2" + results[newi].item_id);
+
         // obtain info of item they want to buy
         var itemtobuy;
-
         for (var i = 0; i < results.length; i++) {
-          if (results[i].item_id === answer.iditem) {
-            itemtobuy = results[i];
+          if (results[newi].item_id == answer.iditem) {
+            itemtobuy = results[newi];
+          }
+          else {
+            console.log("The item you requested is not currently available.")
           }
         }
 
-        // check if there is enough product 
-        if (itemtobuy.stock_quantity > 0) {
+        console.log("item id to buy stock existing:" + itemtobuy.stock_quantity);
+        console.log("units requested to buy"+answer.numunits);
+        var newstock = itemtobuy.stock_quantity - answer.numunits
+
+        console.log("newstock" + newstock);
+        console.log("item id to buy:" + itemtobuy);
+
+
+        // // check if there is enough product 
+        if ((itemtobuy.stock_quantity) > 0) {
+          console.log("updating database if statement works");
+
           connection.query(
             "UPDATE products SET ? WHERE ?",
             [
               {
-                stock_quantity: stock_quantity - answer.numunits
+                stock_quantity: newstock
               },
               {
-                item_id: itemtobuy
+                item_id: itemtobuy.item_id
               }
             ],
             function (error) {
               if (error) throw err;
-              console.log("Successfully bought item!");
+              console.log("Final -- Total price:")
+              start();
             }
           )
         }
         else {
           // there isn't enough product available
           console.log("We apologize but there isn't enough product.")
+          start();
         }
       });
   })
